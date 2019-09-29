@@ -8,6 +8,9 @@ ArrayList<Float> allFloats;
 ArrayList<PVector> points;
 PShape shp;
 
+float scale = 5;
+int start = 0;
+
 void setup() {
   size(800, 600, P3D);
   cam = new PeasyCam(this, 100);
@@ -17,7 +20,7 @@ void setup() {
   points = new ArrayList<PVector>();
   
   for (String s : rawData) {
-    for (int i=0; i<s.length()-4; i+=4) {
+    for (int i=start; i<s.length()-4; i+=4) {
       byte[] bytes = new byte[4];
       bytes[0] = (byte) s.charAt(i);
       bytes[1] = (byte) s.charAt(i+1);
@@ -32,7 +35,7 @@ void setup() {
     float x = allFloats.get(i);
     float y = allFloats.get(i+1);
     float z = allFloats.get(i+2);
-    PVector p = new PVector(x,y,z).mult(5);
+    PVector p = new PVector(x,y,z).mult(scale);
     points.add(p);
   }
   
