@@ -8,7 +8,7 @@ ArrayList<Float> allFloats;
 ArrayList<PVector> points;
 PShape shp;
 
-float scale = 0.01;
+float scale = 1;
 float strokeWeightVal = 4;
 int start = 0;
 int markTime = 0;
@@ -17,6 +17,7 @@ int timeInterval = 100;
 void setup() {
   size(800, 600, P3D);
   cam = new PeasyCam(this, 100);
+  fixClipping();
   
   rawData = loadStrings(filePath);
   
