@@ -8,14 +8,33 @@ ArrayList<Float> allFloats;
 ArrayList<PVector> points;
 PShape shp;
 
-float scale = 5;
+float scale = 0.01;
+float strokeWeightVal = 4;
 int start = 0;
+int markTime = 0;
+int timeInterval = 100;
 
 void setup() {
   size(800, 600, P3D);
   cam = new PeasyCam(this, 100);
   
   rawData = loadStrings(filePath);
+  
+  init();
+}
+
+void draw() {
+  if (millis() > markTime + timeInterval) init();
+  background(0);
+  shape(shp);
+  
+  surface.setTitle("" + frameRate);
+}
+
+void init() {
+  start++;
+  if (start > rawData.length-1) start = 0;
+  
   allFloats = new ArrayList<Float>();
   points = new ArrayList<PVector>();
   
@@ -42,14 +61,11 @@ void setup() {
   shp = createShape();
   shp.beginShape(POINTS);
   shp.stroke(255);
-  shp.strokeWeight(4);
+  shp.strokeWeight(strokeWeightVal);
   for (PVector p : points) {
     shp.vertex(p.x, p.y, p.z);
   }
   shp.endShape();
-}
-
-void draw() {
-  background(0);
-  shape(shp);
+  
+  markTime = millis();
 }
