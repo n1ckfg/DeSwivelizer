@@ -1,5 +1,3 @@
-import java.util.regex.Pattern;
-
 boolean hitDetect3D(PVector p1, PVector p2, float s) { 
   if (PVector.dist(p1, p2) < s) {
     return true;
@@ -17,7 +15,7 @@ float rounder(float _val, float _places){
   
 String getFileNameNoExt(String s) {
   String returns = "";
-  String[] temp = s.split(Pattern.quote("."));
+  String[] temp = s.split(".");
   if (temp.length > 1) {
     for (int i=0; i<temp.length-1; i++) {
       if (i > 0) returns += ".";
@@ -31,7 +29,7 @@ String getFileNameNoExt(String s) {
 
 String getExtFromFileName(String s) {
   String returns = "";
-  String[] temp = s.split(Pattern.quote("."));
+  String[] temp = s.split(".");
   returns = temp[temp.length-1];
   return returns;
 }
