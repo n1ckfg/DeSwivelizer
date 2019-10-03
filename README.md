@@ -1,5 +1,14 @@
 # DeSwivelizer
 
+## Steps:
+<ol>
+	<li style="color:green;">Run Swivel 2 Demo in SheepShaver</li>
+	<li>Open source file</li>
+	<li>Research Swivel 3D Command Set</li>
+	<li>Find Export as Text command through trial and error</li>
+	<li>Convert text to OBJ in Processing</li>
+</ol>
+
 ## References:
 <ul>
 	<li>https://www.macintoshrepository.org/1496-swivel-3d</li>
