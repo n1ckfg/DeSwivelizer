@@ -2,7 +2,7 @@
 
 ## Steps:
 <ol>
-	<li style="color:green;">Run Swivel 2 Demo in SheepShaver</li>
+	<li style="font-color:green;">Run Swivel 2 Demo in SheepShaver</li>
 	<li>Open source file</li>
 	<li>Research Swivel 3D Command Set</li>
 	<li>Find Export as Text command through trial and error</li>
