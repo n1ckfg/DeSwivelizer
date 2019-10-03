@@ -3,7 +3,8 @@ import peasy.*;
 PeasyCam cam;
 
 String filePath = "Beastie2.rsrc";
-byte[] rawData;
+byte[] rawBinData;
+String[] rawTextData;
 ArrayList<Float> allFloats;
 ArrayList<PVector> points;
 PShape shp;
@@ -14,6 +15,7 @@ int start = 0;
 int markTime = 0;
 int timeInterval = 100;
 
+boolean halfPrecision = false;
 boolean doLoop = true;
 boolean doSaveFile = true;
 
@@ -22,12 +24,12 @@ void setup() {
   cam = new PeasyCam(this, 100);
   fixClipping();
   
-  rawData = loadBytes(filePath);
-  
+  rawBinData = loadBytes(filePath);
+  rawTextData = loadStrings(filePath);   
+
   if (doSaveFile) {
-    String[] textOutput = loadStrings(filePath);   
-    println(textOutput);
-    saveStrings(filePath + ".txt", textOutput);
+    //println(textOutput);
+    //saveStrings(filePath + ".txt", textOutput);
   }
   
   init();
@@ -42,20 +44,33 @@ void draw() {
 }
 
 void init() {
+  int numBytes = 0;
+  if (halfPrecision) {
+    numBytes = 2;
+  } else {
+    numBytes = 4;
+  }
+  
   if (doLoop) start++;
-  if (start > rawData.length-1) start = 0;
+  if (start > rawBinData.length-1) start = 0;
   
   allFloats = new ArrayList<Float>();
   points = new ArrayList<PVector>();
   
-  for (int i=start; i<rawData.length-4; i+=4) {
-    byte[] bytes = new byte[4];
-    bytes[0] = (byte) rawData[i];
-    bytes[1] = (byte) rawData[i+1];
-    bytes[2] = (byte) rawData[i+2];
-    bytes[3] = (byte) rawData[i+3];
+  for (int i=start; i<rawBinData.length-numBytes; i+=numBytes) {
+    byte[] bytes = new byte[numBytes];
+    for (int j=0; j<numBytes; j++) {
+      bytes[j] = (byte) rawBinData[i+j];
+    }
       
-    allFloats.add(asFloat(bytes));
+    float f = 0;
+    if (halfPrecision) {
+      f = asHalfFloat(bytes);
+    } else {
+      f = asFloat(bytes);
+    }
+    
+    allFloats.add(f);
   }
   
   for (int i=0; i<allFloats.size()-3; i+=3) {

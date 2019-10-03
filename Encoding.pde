@@ -97,6 +97,15 @@ float asFloat(byte[] bytes) {
   return Float.intBitsToFloat(asInt(bytes));
 }
 
+int asHalfInt(byte[] bytes) {
+  return ((bytes[0] & 0xFF) << 16) 
+         | ((bytes[1] & 0xFF) << 24);
+}
+
+float asHalfFloat(byte[] bytes) {
+  return Float.intBitsToFloat(asHalfInt(bytes));
+}
+
 // https://forum.processing.org/two/discussion/23446/saving-multi-dimensional-arrays
 // https://forum.processing.org/one/topic/writing-and-reading-a-mixture-of-ints-and-float-to-from-a-file.html
 void serializeFloats(float[] _floats, String _fileName) {
