@@ -212,3 +212,17 @@ String charsToAscii(char[] input, boolean formatting) {
 String bytesToAscii(byte[] input, boolean formatting) {
   return stringToAscii(new String(input), formatting);
 }
+
+int countStringsLength(String[] strings) {
+  int returns = 0;
+  for (String s : strings) {
+    returns += s.length();
+  }
+  return returns;
+}
+
+String[] makeStringArray(String s) {
+  String[] returns = new String[1];
+  returns[0] = s;
+  return returns;
+}
