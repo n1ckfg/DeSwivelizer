@@ -21,7 +21,6 @@ void setup() {
 
 void draw() {
   if (doLoop && millis() > markTime + timeInterval) {
-    swivel.bytesStart++;
     swivel.init();
     markTime = millis();
   }
