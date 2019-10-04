@@ -4,15 +4,16 @@ class SwivelObject {
   String[] objLines;
   byte[] pointBytes;
   int pointBytesStart = 0;
+  color col;
 
   int index;
   
   int indexLoc = 0;
-  int pointsLoc = 33;
+  int pointsLoc = 0;
   
   int numBytes = 4;
   float scale = 0.1;
-  float strokeWeightVal = 4;
+  float strokeWeightVal = 6;
   
   ArrayList<Float> allFloats;
   ArrayList<PVector> points;
@@ -25,11 +26,13 @@ class SwivelObject {
     
     objLines = objString.split(" ");
     index = parseInt(objLines[0]);
+    
+    col = color(127 + random(127), 127 + random(127), 127 + random(127));
   }
 
   void init() { 
-    pointBytes = String.join("", objLines).getBytes();
-    if (pointBytesStart > pointBytes.length-1) pointBytesStart = 0;
+    pointBytes = objString.getBytes();
+    if (pointBytesStart > pointBytes.length-numBytes) pointBytesStart = 0;
     
     allFloats = new ArrayList<Float>();
     points = new ArrayList<PVector>();
@@ -55,8 +58,8 @@ class SwivelObject {
     }
     
     shp = createShape();
-    shp.beginShape(POINTS);
-    shp.stroke(255);
+    shp.beginShape(LINES);
+    shp.stroke(col);
     shp.strokeWeight(strokeWeightVal);
     for (PVector p : points) {
       shp.vertex(p.x, p.y, p.z);
