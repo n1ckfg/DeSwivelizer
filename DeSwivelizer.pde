@@ -14,8 +14,8 @@ float strokeWeightVal = 4;
 int start = 0;
 int markTime = 0;
 int timeInterval = 100;
+int numBytes = 4;
 
-boolean halfPrecision = false;
 boolean doLoop = true;
 boolean doSaveFile = true;
 
@@ -44,13 +44,6 @@ void draw() {
 }
 
 void init() {
-  int numBytes = 0;
-  if (halfPrecision) {
-    numBytes = 2;
-  } else {
-    numBytes = 4;
-  }
-  
   if (doLoop) start++;
   if (start > rawBinData.length-1) start = 0;
   
@@ -64,11 +57,7 @@ void init() {
     }
       
     float f = 0;
-    if (halfPrecision) {
-      f = asHalfFloat(bytes);
-    } else {
-      f = asFloat(bytes);
-    }
+    f = asFloat(bytes);
     
     allFloats.add(f);
   }

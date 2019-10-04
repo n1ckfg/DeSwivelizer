@@ -1,9 +1,5 @@
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import javax.imageio.ImageIO;
 import java.util.Base64;
 
@@ -97,15 +93,6 @@ float asFloat(byte[] bytes) {
   return Float.intBitsToFloat(asInt(bytes));
 }
 
-int asHalfInt(byte[] bytes) {
-  return ((bytes[0] & 0xFF) << 16) 
-         | ((bytes[1] & 0xFF) << 24);
-}
-
-float asHalfFloat(byte[] bytes) {
-  return Float.intBitsToFloat(asHalfInt(bytes));
-}
-
 // https://forum.processing.org/two/discussion/23446/saving-multi-dimensional-arrays
 // https://forum.processing.org/one/topic/writing-and-reading-a-mixture-of-ints-and-float-to-from-a-file.html
 void serializeFloats(float[] _floats, String _fileName) {
@@ -133,4 +120,36 @@ void floatsToBytes(float[] floats, String _fileName) {
   }
   
   saveBytes(_fileName, bytes);
+}
+
+// https://coderanch.com/t/554027/java/Java-Convert-binary-file-text
+char[] readFileAsChars(String url) throws IOException {
+  url = dataPath(url);
+  File fileHandle = new File(url);
+  char[] returns = new char[(int) fileHandle.length()];
+   
+  DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(url)));
+  
+  int counter = 0;
+  while (in.available() != 0) {
+    returns[counter] = (char) in.readByte();
+    counter++;
+  }
+  
+  in.close();
+    
+  return returns;
+}
+
+String charsToString(char[] chars) {
+  return new String(chars);
+}
+
+char[] stringToChars(String s) {
+  return s.toCharArray();
+}
+
+char[] stringsToChars(String[] strings) {
+  String s = String.join("", strings);
+  return s.toCharArray();
 }
