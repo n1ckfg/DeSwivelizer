@@ -29,6 +29,8 @@ class SwivelObject {
     index = parseInt(new String(indexBytes));
     println(index);
     col = color(127 + random(127), 127 + random(127), 127 + random(127));
+    
+    init();
   }
 
   void init() { 

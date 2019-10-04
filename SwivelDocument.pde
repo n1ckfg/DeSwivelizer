@@ -2,6 +2,7 @@ class SwivelDocument {
   
   String filePath;
   byte[] rawBytes;
+  String[] rawStrings;
   
   int byteCounter = 0;
   int byteStart = 0;
@@ -13,10 +14,14 @@ class SwivelDocument {
   SwivelDocument(String _filePath) {
     filePath = _filePath;
     rawBytes = loadBytes(filePath);
+    rawStrings = loadStrings(filePath);
     
     byte[] headerBytes, footerBytes;
-    
+
     objects = new ArrayList<SwivelObject>();
+    
+    byte[] searchBytes = "Object".getBytes();
+    
     boolean armCreateObject = false;
     
     for (int i=0; i<rawBytes.length; i++) {
@@ -24,7 +29,7 @@ class SwivelDocument {
       byte[] byteArray = new byte[byteCounter - byteStart];
       System.arraycopy(rawBytes, byteStart, byteArray, 0, byteCounter - byteStart);
       
-      int findIndex = findIndexOf(byteArray, "Object".getBytes());
+      int findIndex = findIndexOf(byteArray, searchBytes);
       if (findIndex != -1) {
         if (armCreateObject) {
           armCreateObject = false;
@@ -35,6 +40,8 @@ class SwivelDocument {
         byteStart = byteCounter;
       }
     }
+    
+    init();
   }
   
   void init() {
@@ -45,7 +52,7 @@ class SwivelDocument {
   }
   
   void save() {
-    //saveStrings(filePath + ".txt", objStrings);  
+    saveStrings(filePath + ".txt", rawStrings);  
   }
   
   void draw() {

@@ -21,3 +21,5 @@
 	<li>https://books.google.ca/books?id=lzsEAAAAMBAJ</li>
 	<li>https://archive.org/stream/MacWorld_8901_January_1988/MacWorld_8901_January_1988_djvu.txt</li>
 </ul>
+
+<img src="./docs/beastie.jpg">
