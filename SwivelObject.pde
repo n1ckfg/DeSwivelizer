@@ -1,7 +1,7 @@
 class SwivelObject {
 
-  String objString;
-  String[] objLines;
+  byte[] objBytes;
+  
   byte[] pointBytes;
   int pointBytesStart = 0;
   color col;
@@ -19,19 +19,20 @@ class SwivelObject {
   ArrayList<PVector> points;
   PShape shp;
   
-  SwivelObject(String s, float _scale, float _strokeWeightVal) {
-    objString = s; 
+  SwivelObject(byte[] b, float _scale, float _strokeWeightVal) {
+    objBytes = b;
+    
     scale = _scale;
     strokeWeightVal = _strokeWeightVal;
     
-    objLines = objString.split(" ");
-    index = parseInt(objLines[0]);
-    
+    byte[] indexBytes = { objBytes[0], objBytes[1] };
+    index = parseInt(new String(indexBytes));
+    println(index);
     col = color(127 + random(127), 127 + random(127), 127 + random(127));
   }
 
   void init() { 
-    pointBytes = objString.getBytes();
+    pointBytes = objBytes;
     if (pointBytesStart > pointBytes.length-numBytes) pointBytesStart = 0;
     
     allFloats = new ArrayList<Float>();
