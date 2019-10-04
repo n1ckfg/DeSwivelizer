@@ -26,10 +26,10 @@ void setup() {
   
   rawBinData = loadBytes(filePath);
   rawTextData = loadStrings(filePath);   
+  
 
   if (doSaveFile) {
-    //println(textOutput);
-    //saveStrings(filePath + ".txt", textOutput);
+    saveStrings(filePath + ".txt", stringsToAscii(rawTextData, false));
   }
   
   init();

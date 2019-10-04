@@ -153,3 +153,62 @@ char[] stringsToChars(String[] strings) {
   String s = String.join("", strings);
   return s.toCharArray();
 }
+
+char[] bytesToChars(byte[] bytes) {
+  char[] returns = new char[bytes.length];
+  for (int i=0; i<bytes.length; i++) {
+    returns[i] = (char) bytes[i];
+  }
+  return returns;
+}
+
+byte[] charsToBytes(char[] chars) {
+  byte[] returns = new byte[chars.length];
+  for (int i=0; i<chars.length; i++) {
+    returns[i] = (byte) chars[i];
+  }
+  return returns;
+}
+
+byte[] stringToBytes(String s) {
+  return s.getBytes();
+}
+
+byte[] stringsToBytes(String[] strings) {
+  String s = String.join("", strings);
+  return s.getBytes();
+}
+
+// https://processing.org/discourse/beta/num_1211919039.html
+String stringToAscii(String input, boolean formatting) {
+  StringBuffer sb = new StringBuffer();
+
+  byte[] utf8 = input.getBytes();
+  for (int i = 0; i < utf8.length; i++) {
+    int value = utf8[i] & 0xff;
+    if (value < 33 || value > 126) {
+      if (formatting) sb.append('%');
+      sb.append(hex(value, 2));
+    } else {
+      sb.append((char) value);
+    }
+  }
+  
+  return sb.toString();
+}
+
+String[] stringsToAscii(String[] input, boolean formatting) {
+  for (int i=0; i<input.length; i++) {
+    input[i] = stringToAscii(input[i], formatting);
+  }
+  
+  return input;
+}
+
+String charsToAscii(char[] input, boolean formatting) {
+  return stringToAscii(new String(input), formatting);
+}
+
+String bytesToAscii(byte[] input, boolean formatting) {
+  return stringToAscii(new String(input), formatting);
+}
