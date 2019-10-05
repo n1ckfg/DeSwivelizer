@@ -1,36 +1,38 @@
+// This contains geometry.
+
 class SwivelObject {
 
   byte[] objBytes;
+  String objString;
+  String objAsciiString;
   
   byte[] pointBytes;
   int pointBytesStart = 0;
   color col;
 
-  int index;
-  
+  int index = 0;
   int indexLoc = 0;
   int pointsLoc = 0;
   
   int numBytes = 4;
-  float scale = 0.1;
+  float scale = 0.01;
   float strokeWeightVal = 6;
   
   ArrayList<Float> allFloats;
   ArrayList<PVector> points;
   PShape shp;
-  
-  SwivelObject(byte[] b, float _scale, float _strokeWeightVal) {
+    
+  SwivelObject(byte[] b, int _index) {
     objBytes = b;
-    
-    scale = _scale;
-    strokeWeightVal = _strokeWeightVal;
-    
-    byte[] indexBytes = { objBytes[0], objBytes[1] };
-    index = parseInt(new String(indexBytes));
-    println(index);
+    objString = new String(objBytes);
+
+    index = _index;
+    objAsciiString = "<BEGIN OBJECT " + index + ">\n" + stringToAscii(objString) + "\n</END OBJECT " + index + ">\n";
+
     col = color(127 + random(127), 127 + random(127), 127 + random(127));
     
     init();
+    print(" -- init object " + index);
   }
 
   void init() { 
@@ -67,9 +69,9 @@ class SwivelObject {
     for (PVector p : points) {
       shp.vertex(p.x, p.y, p.z);
     }
-    shp.endShape();
+    shp.endShape();  
   }
-  
+   
   void draw() {
     shape(shp);
   }

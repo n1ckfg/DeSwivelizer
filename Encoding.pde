@@ -180,14 +180,14 @@ byte[] stringsToBytes(String[] strings) {
 }
 
 // https://processing.org/discourse/beta/num_1211919039.html
-String stringToAscii(String input, boolean formatting) {
+String stringToAscii(String input) {
   StringBuffer sb = new StringBuffer();
 
   byte[] utf8 = input.getBytes();
   for (int i = 0; i < utf8.length; i++) {
     int value = utf8[i] & 0xff;
     if (value < 33 || value > 126) {
-      if (formatting) sb.append('%');
+      //sb.append('%');
       sb.append(hex(value, 2));
     } else {
       sb.append((char) value);
@@ -197,20 +197,20 @@ String stringToAscii(String input, boolean formatting) {
   return sb.toString();
 }
 
-String[] stringsToAscii(String[] input, boolean formatting) {
+String[] stringsToAscii(String[] input) {
   for (int i=0; i<input.length; i++) {
-    input[i] = stringToAscii(input[i], formatting);
+    input[i] = stringToAscii(input[i]);
   }
   
   return input;
 }
 
-String charsToAscii(char[] input, boolean formatting) {
-  return stringToAscii(new String(input), formatting);
+String charsToAscii(char[] input) {
+  return stringToAscii(new String(input));
 }
 
-String bytesToAscii(byte[] input, boolean formatting) {
-  return stringToAscii(new String(input), formatting);
+String bytesToAscii(byte[] input) {
+  return stringToAscii(new String(input));
 }
 
 int countStringsLength(String[] strings) {
@@ -230,10 +230,7 @@ String[] makeStringArray(String s) {
 // http://helpdesk.objects.com.au/java/search-a-byte-array-for-a-byte-sequence
 // The Knuth-Morris-Pratt Pattern Matching Algorithm can be used to search a byte array.
 
-/**
- * Search the data byte array for the first occurrence 
- * of the byte array pattern.
- */
+// Search the data byte array for the first occurrence of the byte array pattern.
 int findIndexOf(byte[] data, byte[] pattern) {
   int[] failure = computeFailure(pattern);
 
@@ -254,10 +251,7 @@ int findIndexOf(byte[] data, byte[] pattern) {
   return -1;
 }
 
-/**
- * Computes the failure function using a boot-strapping process,
- * where the pattern is matched against itself.
- */
+// Computes the failure function using a boot-strapping process, where the pattern is matched against itself.
 int[] computeFailure(byte[] pattern) {
   int[] failure = new int[pattern.length];
 
