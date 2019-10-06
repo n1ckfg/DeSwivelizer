@@ -27,7 +27,7 @@ class SwivelObject {
     objString = new String(objBytes);
 
     index = _index;
-    objAsciiString = "<BEGIN OBJECT " + index + ">\n" + stringToAscii(objString) + "\n</END OBJECT " + index + ">\n";
+    objAsciiString = "<OBJECT_" + index + ">\n" + stringToAscii(objString) + "\n</OBJECT_" + index + ">\n";
 
     col = color(127 + random(127), 127 + random(127), 127 + random(127));
     
