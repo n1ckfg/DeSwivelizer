@@ -13,6 +13,7 @@ class SwivelDocument {
   
   // Every object block contains its name in ascii. 
   // By default it's [ Object ] followed by an index number
+  // The index numbers are often sequential--but not always!
   // Keep a string version so we can increment the index.
   String beginObjectString = "Object";
   byte[] beginObjectBytes = beginObjectString.getBytes();
@@ -21,6 +22,9 @@ class SwivelDocument {
   // By default it's [ plastic ].
   // We're not using materials so this can be treated as object end.
   byte[] endObjectBytes = "plastic".getBytes();
+  
+  // We need to discard bytes after this entry
+  byte[] middleObjectSplitBytes = "SWVL".getBytes();
 
   // The header block also contains one mention of [ Object ]
   SwivelHeader header;
@@ -47,7 +51,6 @@ class SwivelDocument {
       int findStartIndex = findIndexOf(byteArray, (beginObjectString + 1).getBytes());   
       if (findStartIndex != -1) {
         headerEndIndex = byteStart + findStartIndex;
-        startIndices.add(headerEndIndex);
         break;
       }
     }
@@ -82,6 +85,8 @@ class SwivelDocument {
       }
     }
     
+    endIndices.remove(0);
+        
     println("startIndices size: " + startIndices.size() + "   endIndices size: " + endIndices.size());
     println("\nstartIndices: " + startIndices + "\n\nendIndices: " + endIndices + "\n");
     
@@ -93,7 +98,16 @@ class SwivelDocument {
         int end = endIndices.get(i);
         byte[] byteArray = new byte[end - start];
         System.arraycopy(rawBytes, start, byteArray, 0, end - start);
-        objects.add(new SwivelObject(byteArray, objects.size()));
+        
+        int split = findIndexOf(byteArray, middleObjectSplitBytes);
+        
+        if (split != -1) {
+          byte[] newByteArray = new byte[split];        
+          System.arraycopy(rawBytes, start, newByteArray, 0, split);
+          objects.add(new SwivelObject(newByteArray, extractIndexNumber(newByteArray)));
+        } else {
+          objects.add(new SwivelObject(byteArray, extractIndexNumber(byteArray)));
+        }
       }
       
       byte[] headerBytes = new byte[headerEndIndex];
@@ -138,6 +152,13 @@ class SwivelDocument {
     for (SwivelObject obj : objects) {
       obj.draw();
     }
+  }
+  
+  int extractIndexNumber(byte[] bytes) {
+    String s = new String(bytes);
+    String ss = s.split("   ")[0];
+    String sss = ss.split("Object")[1];
+    return parseInt(sss);
   }
 
 }

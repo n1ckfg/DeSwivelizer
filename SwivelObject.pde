@@ -15,7 +15,7 @@ class SwivelObject {
   int pointsLoc = 0;
   
   int numBytes = 4;
-  float scale = 0.1;
+  float scale = 0.0001;
   float strokeWeightVal = 4;
   boolean drawLines = true;
   
