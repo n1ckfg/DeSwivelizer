@@ -14,8 +14,8 @@ class SwivelObject {
   int indexLoc = 0;
   int pointsLoc = 0;
   
-  int numBytes = 4;
-  float scale = 0.0001;
+  int numBytes = 2;
+  float scale = 512;
   float strokeWeightVal = 4;
   boolean drawLines = true;
   
@@ -50,15 +50,18 @@ class SwivelObject {
       }
         
       float f = 0;
-      f = asFloat(bytes);
-      
+      if (numBytes == 4) {
+        f = asFloat(bytes);
+      } else {
+        f = asHalfFloat(bytes);
+      }
       allFloats.add(f);
     }
     
     for (int i=0; i<allFloats.size()-3; i+=3) {
       float x = allFloats.get(i);
-      float y = allFloats.get(i+1);
-      float z = allFloats.get(i+2);
+      float z = allFloats.get(i+1);
+      float y = allFloats.get(i+2);
       PVector p = new PVector(x,y,z).mult(scale);
       points.add(p);
     }
