@@ -15,8 +15,9 @@ class SwivelObject {
   int pointsLoc = 0;
   
   int numBytes = 4;
-  float scale = 0.001;
+  float scale = 0.1;
   float strokeWeightVal = 4;
+  boolean drawLines = true;
   
   ArrayList<Float> allFloats;
   ArrayList<PVector> points;
@@ -63,7 +64,11 @@ class SwivelObject {
     }
     
     shp = createShape();
-    shp.beginShape(LINES);
+    if (drawLines) {
+      shp.beginShape(LINES);
+    } else {
+      shp.beginShape(POINTS);
+    }
     shp.stroke(col);
     shp.strokeWeight(strokeWeightVal);
     for (PVector p : points) {
