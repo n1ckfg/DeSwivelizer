@@ -15,8 +15,8 @@ class SwivelObject {
   int pointsLoc = 0;
   
   int numBytes = 4;
-  float scale = 0.01;
-  float strokeWeightVal = 6;
+  float scale = 0.001;
+  float strokeWeightVal = 4;
   
   ArrayList<Float> allFloats;
   ArrayList<PVector> points;

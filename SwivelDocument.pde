@@ -5,17 +5,22 @@ class SwivelDocument {
   String[] rawStrings;
   String[] asciiStrings;
   
-  int objCounter, byteCounter, byteStart;
+  int byteCounter, byteStart, headerEndIndex, footerStartIndex;
+  boolean armMakeObject = false;
   ArrayList<SwivelObject> objects;
+  ArrayList<Integer> startIndices;
+  ArrayList<Integer> endIndices;
   
   // Every object block contains its name in ascii. 
-  // By default it's [ Object ] followed by a number
+  // By default it's [ Object ] followed by an index number
+  // Keep a string version so we can increment the index.
   String beginObjectString = "Object";
-  
+  byte[] beginObjectBytes = beginObjectString.getBytes();
+
   // Every object block contains a material block with its name in ascii.
   // By default it's [ plastic ].
   // We're not using materials so this can be treated as object end.
-  String endObjectString = "plastic";
+  byte[] endObjectBytes = "plastic".getBytes();
 
   // The header block also contains one mention of [ Object ]
   SwivelHeader header;
@@ -28,70 +33,86 @@ class SwivelDocument {
     asciiStrings = stringsToAscii(rawStrings);
     
     objects = new ArrayList<SwivelObject>();
+    startIndices = new ArrayList<Integer>();
+    endIndices = new ArrayList<Integer>();
     
-    // 1. Loop through and find all the indices.
-    int objCounter = 1;
-    byteStart = findIndexOf(rawBytes, (beginObjectString + objCounter).getBytes());
-    byteCounter = byteStart;
-    
-    for (int i=byteStart; i<rawBytes.length; i++) {
+    byteStart = 0;
+    byteCounter = 0;
+
+    for (int i=0; i<rawBytes.length; i++) {
       byteCounter++;
       byte[] byteArray = new byte[byteCounter - byteStart];
       System.arraycopy(rawBytes, byteStart, byteArray, 0, byteCounter - byteStart);
       
-      int findStartIndex = findIndexOf(byteArray, (beginObjectString + objCounter).getBytes());
-      
+      int findStartIndex = findIndexOf(byteArray, (beginObjectString + 1).getBytes());   
       if (findStartIndex != -1) {
-        int findEndIndex = findIndexOf(byteArray, endObjectString.getBytes());
-        println(findStartIndex + " " + findEndIndex);
-        
-        if (findEndIndex != -1 && findEndIndex > findStartIndex) {
-          int start = findStartIndex;
-          int end = findEndIndex;
-          println(start + " " + end);
-          byte[] objByteArray = new byte[end - start];
-          System.arraycopy(rawBytes, start, byteArray, 0, end - start);
-          objects.add(new SwivelObject(objByteArray, objCounter));
-          objCounter++;
-          byteStart = byteCounter;
-        }
+        headerEndIndex = byteStart + findStartIndex;
+        startIndices.add(headerEndIndex);
+        break;
       }
     }
     
-    println("\nFound objects: " + objects.size());
-
-    /*
-    headerEndIndex = objectStartIndices.get(1); // remember that the header block also contains one mention of [ Object ]
-    footerStartIndex = objectEndIndices.get(objectEndIndices.size()-1);
-      
-    println("Header size: " + headerEndIndex + ", footer size: " + (rawBytes.length - footerStartIndex));
-
-    // 2. Build objects.   
-    for (int i=0; i<objectStartIndices.size(); i++) {
-      int start = objectStartIndices.get(i);
-      int end = objectEndIndices.get(i);
-      
-      byte[] byteArray = new byte[end];
-      System.arraycopy(rawBytes, start, byteArray, 0, end);
-      objects.add(new SwivelObject(byteArray, objects.size()+1));
-    }
-
-    println("\nBuilt " + objects.size() + " objects.");
-    println("Footer begins at " + footerStartIndex);
-
-    byte[] headerBytes = new byte[headerEndIndex];
-    System.arraycopy(rawBytes, 0, headerBytes, 0, headerEndIndex);
-    header = new SwivelHeader(headerBytes);
-    println("Header size: " + header.headerBytes.length);
-
-    byte[] footerBytes = new byte[footerStartIndex];
-    System.arraycopy(rawBytes, footerStartIndex, footerBytes, 0, rawBytes.length - footerStartIndex);
-    footer = new SwivelFooter(footerBytes);
-    println("Footer size: " + footer.footerBytes.length);
-    */
+    byteStart = headerEndIndex;
+    byteCounter = headerEndIndex;
     
-    init();
-    save();
+    for (int i=headerEndIndex; i<rawBytes.length; i++) {
+      byteCounter++;
+      byte[] byteArray = new byte[byteCounter - byteStart];
+      System.arraycopy(rawBytes, byteStart, byteArray, 0, byteCounter - byteStart);
+      
+      int findStartIndex = findIndexOf(byteArray, beginObjectBytes);   
+      if (findStartIndex != -1) {
+        startIndices.add(byteStart + findStartIndex);
+        byteStart = byteCounter;
+      }
+    }
+    
+    byteStart = headerEndIndex;
+    byteCounter = headerEndIndex;
+    
+    for (int i=headerEndIndex; i<rawBytes.length; i++) {
+      byteCounter++;
+      byte[] byteArray = new byte[byteCounter - byteStart];
+      System.arraycopy(rawBytes, byteStart, byteArray, 0, byteCounter - byteStart);
+      
+      int findEndIndex = findIndexOf(byteArray, endObjectBytes);   
+      if (findEndIndex != -1) {
+        endIndices.add(byteStart + findEndIndex);
+        byteStart = byteCounter;
+      }
+    }
+    
+    println("startIndices size: " + startIndices.size() + "   endIndices size: " + endIndices.size());
+    println("\nstartIndices: " + startIndices + "\n\nendIndices: " + endIndices + "\n");
+    
+    if (startIndices.size() == endIndices.size()) {
+      footerStartIndex = endIndices.get(endIndices.size()-1);
+      
+      for (int i=0; i<startIndices.size(); i++) {
+        int start = startIndices.get(i);
+        int end = endIndices.get(i);
+        byte[] byteArray = new byte[end - start];
+        System.arraycopy(rawBytes, start, byteArray, 0, end - start);
+        objects.add(new SwivelObject(byteArray, objects.size()));
+      }
+      
+      byte[] headerBytes = new byte[headerEndIndex];
+      System.arraycopy(rawBytes, 0, headerBytes, 0, headerEndIndex);
+      header = new SwivelHeader(headerBytes);
+  
+      byte[] footerBytes = new byte[rawBytes.length - footerStartIndex];
+      System.arraycopy(rawBytes, footerStartIndex, footerBytes, 0, rawBytes.length - footerStartIndex);
+      footer = new SwivelFooter(footerBytes);
+      
+      println("\n\nFound objects: " + objects.size());
+      println("Header size: " + header.headerBytes.length + "   footer size: " + footer.footerBytes.length);
+      
+      init();
+      save();
+    } else {
+      println("ERROR: start and end indices do not match.");
+      exit();
+    }
   }
   
   void init() {
@@ -108,8 +129,8 @@ class SwivelDocument {
       objStrings[i] = objects.get(i-1).objAsciiString;
     }
     objStrings[objStrings.length-1] = footer.footerAsciiString;
-    
     saveStrings(filePath + "_format.txt", objStrings);
+    
     saveStrings(filePath + "_dump.txt", asciiStrings);  
   }
   
